@@ -1,23 +1,91 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import React from "react";
+
+function NumPads({ onChange }) {
+  return (
+    <div className="numpads">
+      {[...Array(10).keys()].reverse().map((v) => (
+        <button
+          key={v}
+          onClick={() => {
+            onChange(v);
+          }}
+          className="numpad"
+        >
+          {v}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+const operators = ["+", "-", "*", "/"];
+
+function Operators({ onChange }) {
+  return (
+    <div className="operators">
+      {operators.map((v) => (
+        <button
+          key={v}
+          onClick={() => {
+            onChange(v);
+          }}
+          className="operator"
+        >
+          {v}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 function App() {
+  const [output, setOutput] = React.useState([]);
+  const [operator, setOperator] = React.useState();
+
+  const handleNumPadChange = (v) => {
+    console.log({
+      output,
+      operator,
+      v,
+    });
+    if ((output.length === 1 && !operator) || output.length === 0) {
+      setOutput([v]);
+    }
+
+    if (output.length === 1 && operator) {
+      switch (operator) {
+        case "+":
+          setOutput([output[0] + v]);
+          setOperator();
+          break;
+        case "-":
+          setOutput([output[0] - v]);
+          setOperator();
+          break;
+        case "*":
+          setOutput([output[0] * v]);
+          setOperator();
+          break;
+        case "/":
+          setOutput([output[0] / v]);
+          setOperator();
+          break;
+        default:
+          console.log("Something went wrong");
+      }
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {output.map((v) => (
+        <p>{v}</p>
+      ))}
+      <p>{operator ?? ""}</p>
+      <NumPads onChange={handleNumPadChange} />
+      <Operators onChange={setOperator} />
     </div>
   );
 }
